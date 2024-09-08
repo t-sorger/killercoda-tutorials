@@ -1,0 +1,72 @@
+{
+    "title": "Setting Up A Dashboard Using Splunk",
+    "description": "In this tutorial you will learn how to setup a dashboard using Splunk. It will cover the following steps: add a data source, create and modify a dashboard, and setting up an alert.",
+    "details": {
+        "intro": {
+            "text": "intro.md"
+        },
+        "steps": [
+            {
+                "title": "Motivation and Learning Outcomes",
+                "text": "steps/step-0.md"
+            },
+            {
+                "title": "Let's Set Up the Envorinment",
+                "text": "steps/step-1.md"
+            },
+            {
+                "title": "Let's Add A New Data Source",
+                "text": "steps/step-2.md"
+            },
+            {
+                "title": "Let's Create A First Dashboard",
+                "text": "steps/step-3.md"
+            },
+            {
+                "title": "Let's Explore A Bit",
+                "text": "steps/step-4.md"
+            },
+            {
+                "title": "Let's Add More Metrics To The Dashboard",
+                "text": "steps/step-5.md"
+            },
+            {
+                "title": "An Example Of A Dashboard",
+                "text": "steps/step-6.md"
+            },
+            {
+                "title": "Let's Set Up An Alert",
+                "text": "steps/step-7.md"
+            },
+            {
+                "title": "Let's Trigger The Alert",
+                "text": "steps/step-8.md"
+            }
+        ],
+        "finish": {
+            "text": "finish.md"
+        },
+        "assets": {
+            "host01": [
+                {
+                    "file": "infra/**",
+                    "target": "/home",
+                    "chmod": "+rx"
+                },
+                {
+                    "file": "data/**",
+                    "target": "/home",
+                    "chmod": "+r"
+                },
+                {
+                    "file": "example/**",
+                    "target": "/home",
+                    "chmod": "+r"
+                }
+            ]
+        }
+    },
+    "backend": {
+        "imageid": "ubuntu-4GB"
+    }
+}

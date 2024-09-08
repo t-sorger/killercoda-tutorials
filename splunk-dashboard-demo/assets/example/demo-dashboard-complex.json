@@ -1,0 +1,302 @@
+{
+    "visualizations": {
+        "viz_npzHjiVi": {
+            "type": "splunk.singlevalueradial",
+            "dataSources": {
+                "primary": "ds_o4jV9wBQ"
+            },
+            "title": "Builds Today",
+            "description": "The number of builds today."
+        },
+        "viz_mkzhAwNM": {
+            "type": "splunk.line",
+            "title": "Builds Over Time",
+            "description": "The builds over time.",
+            "dataSources": {
+                "primary": "ds_ahwIRAlQ"
+            },
+            "options": {
+                "x": "> primary | seriesByName('_time')"
+            }
+        },
+        "viz_iqGpAqug": {
+            "type": "splunk.pie",
+            "dataSources": {
+                "primary": "ds_weHA0uKZ"
+            },
+            "title": "Build Status Distribution.",
+            "description": "The build status distribution: Warning, Error, Success."
+        },
+        "viz_aSG2bDFa": {
+            "type": "splunk.bar",
+            "dataSources": {
+                "primary": "ds_ev01Zsn9"
+            },
+            "title": "Top 5 Most Frequent Developer",
+            "description": "Number of builds of the top 5 most frequent developers."
+        },
+        "viz_ol5EfGhF": {
+            "type": "splunk.bar",
+            "dataSources": {
+                "primary": "ds_0ipYsaoZ"
+            },
+            "title": "Top 5 Most Frequent Projects",
+            "description": "Number of builds of the top 5 most frequent projects."
+        },
+        "viz_e5kcDDps": {
+            "type": "splunk.table",
+            "title": "Builds Overview",
+            "description": "Overview of the builds.",
+            "dataSources": {
+                "primary": "ds_jyF0WR3f"
+            }
+        },
+        "viz_ykK1EVVH": {
+            "type": "splunk.singlevalue",
+            "dataSources": {
+                "primary": "ds_9bCDozRA"
+            },
+            "title": "Number of Alerts",
+            "description": "The number of alerts."
+        }
+    },
+    "dataSources": {
+        "ds_o4jV9wBQ": {
+            "type": "ds.search",
+            "options": {
+                "query": "source=\"/mnt/data/*\" sourcetype=\"_json\"\n| search build_id=$input_build_id$ build_status IN ( $input_build_status$ ) developer=$input_developer$ project=$input_project$ message=$input_message$\n| stats count",
+                "queryParameters": {
+                    "earliest": "-7d@h",
+                    "latest": "now"
+                }
+            },
+            "name": "Builds Today"
+        },
+        "ds_ahwIRAlQ": {
+            "type": "ds.search",
+            "options": {
+                "query": "source=\"/mnt/data/*\" sourcetype=\"_json\"\n| search build_id=$input_build_id$ build_status IN ( $input_build_status$ ) developer=$input_developer$ project=$input_project$ message=$input_message$\n| bucket _time span=hour\n| stats count by _time",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "name": "Builds Over Time"
+        },
+        "ds_weHA0uKZ": {
+            "type": "ds.search",
+            "options": {
+                "query": "source=\"/mnt/data/*\" sourcetype=\"_json\"\n| search build_id=$input_build_id$ build_status IN ( $input_build_status$ ) developer=$input_developer$ project=$input_project$ message=$input_message$\n| stats count by build_status",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "name": "Build Status Distribution"
+        },
+        "ds_ev01Zsn9": {
+            "type": "ds.search",
+            "options": {
+                "query": "source=\"/mnt/data/*\" sourcetype=\"_json\"\n| search build_id=$input_build_id$ build_status IN ( $input_build_status$ ) developer=$input_developer$ project=$input_project$ message=$input_message$\n| stats count by developer\n| sort -count\n| head 5"
+            },
+            "name": "Most Frequent Developer"
+        },
+        "ds_0ipYsaoZ": {
+            "type": "ds.search",
+            "options": {
+                "query": "source=\"/mnt/data/*\" sourcetype=\"_json\"\n| search build_id=$input_build_id$ build_status IN ( $input_build_status$ ) developer=$input_developer$ project=$input_project$ message=$input_message$\n| stats count by project\n| sort -count\n| head 5"
+            },
+            "name": "Top 5 Most Frequent Project"
+        },
+        "ds_jyF0WR3f": {
+            "type": "ds.search",
+            "options": {
+                "query": "source=\"/mnt/data/*\" sourcetype=\"_json\"\n| search build_id=$input_build_id$ build_status IN ( $input_build_status$ ) developer=$input_developer$ project=$input_project$ message=$input_message$\n| table time, build_id, build_status, developer, project, message"
+            },
+            "name": "Builds Overview"
+        },
+        "ds_9bCDozRA": {
+            "type": "ds.search",
+            "options": {
+                "query": "sourcetype=\"build_error_alert\"\n| stats count",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "name": "Error Count"
+        }
+    },
+    "defaults": {
+        "dataSources": {
+            "ds.search": {
+                "options": {
+                    "queryParameters": {
+                        "latest": "$global_time.latest$",
+                        "earliest": "$global_time.earliest$"
+                    }
+                }
+            }
+        }
+    },
+    "inputs": {
+        "input_global_trp": {
+            "type": "input.timerange",
+            "options": {
+                "token": "global_time",
+                "defaultValue": "-24h@h,now"
+            },
+            "title": "Global Time Range"
+        },
+        "input_QswtmxWu": {
+            "options": {
+                "defaultValue": "*",
+                "token": "input_build_id"
+            },
+            "title": "Build ID",
+            "type": "input.text"
+        },
+        "input_RlQouGuH": {
+            "options": {
+                "items": [
+                    {
+                        "label": "All",
+                        "value": "*"
+                    },
+                    {
+                        "label": "Success",
+                        "value": "success"
+                    },
+                    {
+                        "label": "Warning",
+                        "value": "warning"
+                    },
+                    {
+                        "label": "Error",
+                        "value": "error"
+                    }
+                ],
+                "token": "input_build_status",
+                "defaultValue": [
+                    "*"
+                ]
+            },
+            "title": "Build Status",
+            "type": "input.multiselect"
+        },
+        "input_81zbf26R": {
+            "options": {
+                "defaultValue": "*",
+                "token": "input_developer"
+            },
+            "title": "Developer",
+            "type": "input.text"
+        },
+        "input_EG3g4Ski": {
+            "options": {
+                "defaultValue": "*",
+                "token": "input_project"
+            },
+            "title": "Project",
+            "type": "input.text"
+        },
+        "input_1mZwpOAL": {
+            "options": {
+                "defaultValue": "*",
+                "token": "input_message"
+            },
+            "title": "Message",
+            "type": "input.text"
+        }
+    },
+    "layout": {
+        "type": "absolute",
+        "options": {
+            "width": 1440,
+            "height": 960,
+            "display": "auto"
+        },
+        "structure": [
+            {
+                "item": "viz_npzHjiVi",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 250,
+                    "h": 250
+                }
+            },
+            {
+                "item": "viz_mkzhAwNM",
+                "type": "block",
+                "position": {
+                    "x": 250,
+                    "y": 0,
+                    "w": 940,
+                    "h": 250
+                }
+            },
+            {
+                "item": "viz_iqGpAqug",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 250,
+                    "w": 300,
+                    "h": 300
+                }
+            },
+            {
+                "item": "viz_aSG2bDFa",
+                "type": "block",
+                "position": {
+                    "x": 300,
+                    "y": 250,
+                    "w": 550,
+                    "h": 300
+                }
+            },
+            {
+                "item": "viz_ol5EfGhF",
+                "type": "block",
+                "position": {
+                    "x": 850,
+                    "y": 250,
+                    "w": 590,
+                    "h": 300
+                }
+            },
+            {
+                "item": "viz_e5kcDDps",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 550,
+                    "w": 1440,
+                    "h": 410
+                }
+            },
+            {
+                "item": "viz_ykK1EVVH",
+                "type": "block",
+                "position": {
+                    "x": 1190,
+                    "y": 0,
+                    "w": 250,
+                    "h": 250
+                }
+            }
+        ],
+        "globalInputs": [
+            "input_global_trp",
+            "input_QswtmxWu",
+            "input_RlQouGuH",
+            "input_81zbf26R",
+            "input_EG3g4Ski",
+            "input_1mZwpOAL"
+        ]
+    },
+    "description": "",
+    "title": "Demo Dashboard Complex"
+}
